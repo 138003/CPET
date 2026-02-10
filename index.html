@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFT & CPET 報告生成器 V10</title>
+    <title>PFT & CPET 報告生成器 V11</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen pb-10 font-sans text-slate-800">
     <div class="max-w-[1400px] mx-auto mt-6 bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
-        <div class="bg-indigo-900 p-5 text-white flex justify-between items-center">
+        <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-indigo-300">PFT & CPET Report System V10</h1>
-                <p class="text-xs text-slate-400 font-medium">支援 EKG 自定義描述與 PFT 整合報告</p>
+                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V11</h1>
+                <p class="text-xs text-slate-400 font-medium">支援 EKG 與 AT/RCP 雙重自定義描述</p>
             </div>
         </div>
 
@@ -62,21 +62,21 @@
                 </section>
 
                 <section class="p-4 bg-indigo-50 rounded-xl border border-indigo-100 space-y-4">
-                    <h2 class="text-sm font-bold text-indigo-700 border-b pb-1 text-center">B: CPTX - 定性描述</h2>
+                    <h2 class="text-sm font-bold text-indigo-700 border-b pb-1 text-center uppercase tracking-widest">B: CPTX - Qualitative Analysis</h2>
                     
                     <div class="bg-white p-3 rounded-lg border border-indigo-200">
-                        <label class="text-xs font-bold text-indigo-800 block mb-2 tracking-wide uppercase">5. EKG 心電圖表現</label>
+                        <label class="text-xs font-bold text-indigo-800 block mb-2 uppercase">5. EKG 心電圖表現</label>
                         <select id="ekgStatus" class="w-full p-2 border rounded text-xs bg-slate-50 outline-indigo-500 mb-2" onchange="toggleEKGOther()">
                             <option value="no significant arrythmia or ST-T change during examination">no significant arrythmia or ST-T change during examination</option>
                             <option value="occasional VPCs and APCs noted during exercise">occasional VPCs and APCs noted during exercise</option>
-                            <option value="OTHER">其他 (自由填寫 / Custom Text)</option>
+                            <option value="OTHER">其他 (自由填寫)</option>
                         </select>
-                        <input id="ekgOtherText" type="text" placeholder="請在此輸入 EKG 描述..." class="hidden w-full p-2 border-2 border-orange-300 rounded text-xs bg-orange-50 placeholder-orange-300 animate-pulse">
+                        <input id="ekgOtherText" type="text" placeholder="請手寫 EKG 描述..." class="hidden w-full p-2 border-2 border-orange-300 rounded text-xs bg-orange-50 animate-pulse">
                     </div>
 
                     <div class="grid grid-cols-1 gap-4">
                         <div class="p-3 bg-white rounded border border-slate-200">
-                            <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase">10. 終止原因與性質</p>
+                            <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase">10. 終止原因</p>
                             <div class="grid grid-cols-2 gap-2 text-[10px] mb-3">
                                 <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="dyspnea"> dyspnea</label>
                                 <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="leg fatigue"> leg fatigue</label>
@@ -89,20 +89,24 @@
                             </select>
                         </div>
 
-                        <div class="p-3 bg-white rounded border border-slate-200">
+                        <div class="p-3 bg-white rounded border border-indigo-200 shadow-sm">
                             <p class="text-[10px] font-bold text-indigo-700 mb-2 uppercase">11. AT/RCP 判定</p>
                             <div class="flex gap-4 text-[11px] mb-2 font-semibold">
-                                <label class="flex items-center gap-1 cursor-pointer text-blue-600"><input type="radio" name="atObserved" value="yes" checked onchange="toggleAT(true)"> 觀察到</label>
-                                <label class="flex items-center gap-1 cursor-pointer text-rose-600"><input type="radio" name="atObserved" value="no" onchange="toggleAT(false)"> 未觀察到</label>
+                                <label class="flex items-center gap-1 cursor-pointer text-blue-600"><input type="radio" name="atObserved" value="yes" checked onchange="handleATToggle()"> 觀察到</label>
+                                <label class="flex items-center gap-1 cursor-pointer text-rose-600"><input type="radio" name="atObserved" value="no" onchange="handleATToggle()"> 未觀察到</label>
                             </div>
                             <div id="atInputs" class="grid grid-cols-2 gap-2">
                                 <input id="at_ml" type="number" step="0.1" placeholder="AT ml/kg" class="p-2 border rounded text-xs bg-slate-50">
                                 <input id="rcp_ml" type="number" step="0.1" placeholder="RCP ml/kg" class="p-2 border rounded text-xs bg-slate-50">
                             </div>
-                            <select id="atNoReason" class="hidden w-full mt-1 p-2 border border-rose-200 rounded text-xs bg-rose-50 text-rose-700">
-                                <option value="AT/RCP not reached">AT/RCP not reached</option>
-                                <option value="AT/RCP undeterminated due to uneven breathing">AT/RCP undeterminated due to uneven breathing</option>
-                            </select>
+                            <div id="atNoObservedArea" class="hidden space-y-2">
+                                <select id="atNoReason" class="w-full p-2 border border-rose-200 rounded text-xs bg-rose-50 text-rose-700" onchange="toggleATNoOther()">
+                                    <option value="AT/RCP not reached">AT/RCP not reached</option>
+                                    <option value="AT/RCP undeterminated due to uneven breathing">AT/RCP undeterminated due to uneven breathing</option>
+                                    <option value="OTHER">其他 (自由填寫)</option>
+                                </select>
+                                <input id="atNoOtherText" type="text" placeholder="輸入未觀察到之原因..." class="hidden w-full p-2 border-2 border-orange-300 rounded text-xs bg-orange-50 animate-pulse">
+                            </div>
                         </div>
                     </div>
 
@@ -121,7 +125,7 @@
                 <div class="sticky top-6">
                     <div class="flex justify-between items-center mb-2 px-2">
                         <h2 class="font-bold text-slate-500 text-xs tracking-[0.3em] uppercase">CLINICAL FINAL REPORT</h2>
-                        <button onclick="copyToClipboard()" class="bg-indigo-600 text-white px-10 py-2 rounded-full text-xs font-bold hover:bg-indigo-700 shadow-lg transition-transform hover:scale-105">COPY TO CLIPBOARD</button>
+                        <button onclick="copyToClipboard()" class="bg-indigo-600 text-white px-10 py-2 rounded-full text-xs font-bold hover:bg-indigo-700 shadow-lg">COPY REPORT</button>
                     </div>
                     <textarea id="reportText" class="w-full h-[880px] p-8 text-[13.5px] font-mono border-2 border-slate-300 rounded-3xl bg-white leading-relaxed shadow-inner outline-none focus:border-indigo-400" readonly></textarea>
                 </div>
@@ -130,19 +134,23 @@
     </div>
 
     <script>
-        function toggleAT(observed) {
-            document.getElementById('atInputs').style.display = observed ? 'grid' : 'none';
-            document.getElementById('atNoReason').style.display = observed ? 'none' : 'block';
+        function handleATToggle() {
+            const isObserved = document.querySelector('input[name="atObserved"]:checked').value === 'yes';
+            document.getElementById('atInputs').style.display = isObserved ? 'grid' : 'none';
+            document.getElementById('atNoObservedArea').style.display = isObserved ? 'none' : 'block';
+            toggleATNoOther(); // 連動檢查子選單
+        }
+
+        function toggleATNoOther() {
+            const status = document.getElementById('atNoReason').value;
+            const otherInput = document.getElementById('atNoOtherText');
+            otherInput.classList.toggle('hidden', status !== 'OTHER');
         }
 
         function toggleEKGOther() {
             const status = document.getElementById('ekgStatus').value;
             const otherInput = document.getElementById('ekgOtherText');
-            if (status === 'OTHER') {
-                otherInput.classList.remove('hidden');
-            } else {
-                otherInput.classList.add('hidden');
-            }
+            otherInput.classList.toggle('hidden', status !== 'OTHER');
         }
 
         function generateReport() {
@@ -179,7 +187,7 @@
             const br = (1 - di).toFixed(2);
             const pO2p = o2p !== "__" ? (parseFloat(o2p) * 100 / predO2p).toFixed(1) : "____";
 
-            // EKG Logic (New in V10)
+            // Qualitative Logic (EKG)
             const ekgSel = document.getElementById('ekgStatus').value;
             const ekgFinal = ekgSel === 'OTHER' ? document.getElementById('ekgOtherText').value : ekgSel;
 
@@ -187,7 +195,7 @@
             const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value);
             const termReasonText = reasons.length > 0 ? reasons.join(", ") : "____";
 
-            // Point 11
+            // Point 11 (AT/RCP Logic updated in V11)
             const isAtObserved = document.querySelector('input[name="atObserved"]:checked').value === 'yes';
             let atLine = "";
             if (isAtObserved) {
@@ -195,15 +203,17 @@
                 const rcpV = parseFloat(document.getElementById('rcp_ml').value) || 0;
                 const atPct = peakVO2_ml > 0 ? (atV * 100 / peakVO2_ml).toFixed(1) : "0.0";
                 const rcpPct = peakVO2_ml > 0 ? (rcpV * 100 / peakVO2_ml).toFixed(1) : "0.0";
-                atLine = `11. AT was about ${atV} ml/kg/min (${atPct}% of peak VO2); RCP was about ${rcpValue} ml/kg/min (${rcpPct}% of peak VO2)`;
+                atLine = `11. AT was about ${atV} ml/kg/min (${atPct}% of peak VO2); RCP was about ${rcpV} ml/kg/min (${rcpPct}% of peak VO2)`;
             } else {
-                atLine = `11. ${document.getElementById('atNoReason').value}`;
+                const atNoSel = document.getElementById('atNoReason').value;
+                const atNoFinal = atNoSel === 'OTHER' ? document.getElementById('atNoOtherText').value : atNoSel;
+                atLine = `11. ${atNoFinal || "____"}`;
             }
 
             const line12 = document.getElementById('check12').checked ? `12. Delayed heart rate recovery was observed\n` : "";
             const line13 = document.getElementById('check13').checked ? `13. Inadequate BP response was noted\n` : "";
 
-            // 組合成完整報告
+            // 組合成完整報告文字
             const report = 
 `A: pulmonary function test: ${pftStatus}
 1. FEV1/FVC=${fevfvc}%
