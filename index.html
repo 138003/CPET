@@ -3,102 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPET 臨床數據計算器</title>
+    <title>CPET 臨床報告生成器</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen p-4">
-    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        <header class="bg-blue-600 p-4 text-white text-center">
-            <h1 class="text-xl font-bold">CPET 數據換算工具</h1>
-            <p class="text-xs opacity-80">用於快速計算心肺運動測試指標</p>
-        </header>
+<body class="bg-gray-100 min-h-screen pb-10">
+    <div class="max-w-2xl mx-auto mt-8 bg-white shadow-xl rounded-lg overflow-hidden">
+        <div class="bg-indigo-700 p-4 text-white">
+            <h1 class="text-xl font-bold">CPET 數據換算與報告生成</h1>
+        </div>
 
-        <main class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">年齡 (Age)</label>
-                    <input id="age" type="number" value="29" class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <h2 class="font-bold border-b pb-1 text-indigo-600 text-sm">基本與心率</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="text-xs">年齡: <input id="age" type="number" value="29" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">Peak HR: <input id="peakHR" type="number" class="w-full p-1 border rounded"></label>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Peak HR</label>
-                    <input id="peakHR" type="number" placeholder="bpm" class="w-full mt-1 p-2 border rounded-md">
+
+                <h2 class="font-bold border-b pb-1 text-indigo-600 text-sm">氧耗量 (VO2)</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="text-xs">Peak VO2 (ml/kg/min): <input id="peakVO2_ml" type="number" step="0.1" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">Peak VO2 (L/min): <input id="peakVO2_L" type="number" step="0.01" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">Pred. VO2 (L/min): <input id="predVO2_L" type="number" step="0.01" class="w-full p-1 border rounded"></label>
                 </div>
+
+                <h2 class="font-bold border-b pb-1 text-indigo-600 text-sm">通氣與肺功能</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="text-xs">VE max (L/min): <input id="veMax" type="number" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">FEV1 (L): <input id="fev1" type="number" step="0.01" class="w-full p-1 border rounded"></label>
+                </div>
+
+                <h2 class="font-bold border-b pb-1 text-indigo-600 text-sm">其他指標</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="text-xs">OUES: <input id="oues" type="number" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">VE/VCO2 slope: <input id="vevco2" type="number" step="0.1" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">O2 pulse: <input id="o2p" type="number" step="0.1" class="w-full p-1 border rounded"></label>
+                    <label class="text-xs">Pred. O2 pulse: <input id="predO2p" type="number" step="0.1" class="w-full p-1 border rounded"></label>
+                </div>
+
+                <button onclick="generateReport()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded mt-4 hover:bg-indigo-700">生成報告</button>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 border-t pt-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">VE max</label>
-                    <input id="veMax" type="number" placeholder="L/min" class="w-full mt-1 p-2 border rounded-md">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">FEV1</label>
-                    <input id="fev1" type="number" step="0.1" placeholder="L" class="w-full mt-1 p-2 border rounded-md">
-                </div>
+            <div class="bg-gray-50 p-4 border rounded shadow-inner">
+                <h2 class="font-bold mb-2 text-sm">報告預覽:</h2>
+                <textarea id="reportText" class="w-full h-80 p-2 text-sm font-mono border bg-white" readonly></textarea>
+                <button onclick="copyToClipboard()" class="w-full mt-2 bg-green-600 text-white text-sm py-2 rounded hover:bg-green-700">複製報告內容</button>
             </div>
-
-            <div class="space-y-3 border-t pt-4">
-                <div class="flex gap-3">
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-700">Peak VO2</label>
-                        <input id="peakVO2" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-700">Pred. Peak VO2</label>
-                        <input id="predVO2" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex gap-3 border-t pt-4">
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700">Peak O2 Pulse</label>
-                    <input id="o2Pulse" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
-                </div>
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700">Pred. O2 Pulse</label>
-                    <input id="predO2Pulse" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
-                </div>
-            </div>
-
-            <button onclick="calculateCPET()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl mt-4 shadow-blue-200 shadow-lg hover:bg-blue-700 active:scale-95 transition-transform">
-                立即換算
-            </button>
-
-            <div id="results" class="hidden mt-6 p-4 bg-slate-100 rounded-xl space-y-2 text-sm">
-                <div class="flex justify-between"><span>% Predicted Peak HR:</span><span id="res-phr" class="font-bold"></span></div>
-                <div class="flex justify-between"><span>% Predicted Peak VO2:</span><span id="res-pvo2" class="font-bold"></span></div>
-                <div class="flex justify-between"><span>Dyspnea Index:</span><span id="res-di" class="font-bold text-blue-600"></span></div>
-                <div class="flex justify-between"><span>FAI:</span><span id="res-fai" class="font-bold text-red-600"></span></div>
-                <div class="flex justify-between"><span>% O2 Pulse:</span><span id="res-o2p" class="font-bold"></span></div>
-            </div>
-        </main>
+        </div>
     </div>
 
     <script>
-        function calculateCPET() {
-            const age = parseFloat(document.getElementById('age').value) || 0;
+        function generateReport() {
+            // 讀取數值
+            const age = parseFloat(document.getElementById('age').value);
             const peakHR = parseFloat(document.getElementById('peakHR').value) || 0;
+            const peakVO2_ml = parseFloat(document.getElementById('peakVO2_ml').value) || 0;
+            const peakVO2_L = parseFloat(document.getElementById('peakVO2_L').value) || 0;
+            const predVO2_L = parseFloat(document.getElementById('predVO2_L').value) || 0;
             const veMax = parseFloat(document.getElementById('veMax').value) || 0;
-            const fev1 = parseFloat(document.getElementById('fev1').value) || 0;
-            const peakVO2 = parseFloat(document.getElementById('peakVO2').value) || 0;
-            const predVO2 = parseFloat(document.getElementById('predVO2').value) || 0;
-            const o2Pulse = parseFloat(document.getElementById('o2Pulse').value) || 0;
-            const predO2Pulse = parseFloat(document.getElementById('predO2Pulse').value) || 0;
+            const fev1 = parseFloat(document.getElementById('fev1').value) || 1; // 避免除以0
+            const oues = parseFloat(document.getElementById('oues').value) || 0;
+            const vevco2 = parseFloat(document.getElementById('vevco2').value) || 0;
+            const o2p = parseFloat(document.getElementById('o2p').value) || 0;
+            const predO2p = parseFloat(document.getElementById('predO2p').value) || 1;
 
-            // 計算公式
-            const pphr = (peakHR * 100) / (220 - age);
-            const ppvo2 = (peakVO2 * 100) / predVO2;
-            const di = veMax / (40 * fev1);
-            const fai = 100 - (peakVO2 / predVO2 * 100);
-            const po2p = (o2Pulse * 100) / predO2Pulse;
+            // 邏輯計算
+            const pPeakHR = (peakHR * 100 / (220 - age)).toFixed(1);
+            const peakMETs = (peakVO2_ml / 3.5).toFixed(1);
+            const pPeakVO2 = (peakVO2_L * 100 / predVO2_L).toFixed(1);
+            const fai = (100 - (peakVO2_L / predVO2_L * 100)).toFixed(1);
+            const di = (veMax / (40 * fev1)).toFixed(2);
+            const br = (1 - di).toFixed(2);
+            const pO2p = (o2p * 100 / predO2p).toFixed(1);
 
-            // 顯示結果
-            document.getElementById('results').classList.remove('hidden');
-            document.getElementById('res-phr').innerText = pphr.toFixed(1) + ' %';
-            document.getElementById('res-pvo2').innerText = ppvo2.toFixed(1) + ' %';
-            document.getElementById('res-di').innerText = di.toFixed(2);
-            document.getElementById('res-fai').innerText = fai.toFixed(1) + ' %';
-            document.getElementById('res-o2p').innerText = po2p.toFixed(1) + ' %';
+            // 格式化報告內容
+            const report = 
+`1. max HR:${peakHR};% predicted peak HR=${pPeakHR}%
+2. peak VO2:${peakVO2_ml}ml/kg/min; peak MET:${peakMETs}METs;% predicted peak VO2:${pPeakVO2}%
+3. % FAI=${fai}%
+4. Dyspnea index=${di};Breathing reserve=${br}
+7. OUES: ${oues} ml/min
+8. VE/VCO2 slope: ${vevco2}
+9. O2 pulse: ${o2p} ; ${pO2p}% of predicted`;
+
+            document.getElementById('reportText').value = report;
+        }
+
+        function copyToClipboard() {
+            const copyText = document.getElementById("reportText");
+            copyText.select();
+            document.execCommand("copy");
+            alert("報告內容已複製到剪貼簿！");
         }
     </script>
 </body>
