@@ -3,43 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPET Clinical Report System V15</title>
+    <title>CPET Report System V17</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .card { @apply bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6; }
-        .section-title { @apply text-base font-black mb-4 border-b-2 pb-2 flex items-center gap-2 uppercase tracking-tighter; }
-        .input-group { @apply space-y-1; }
-        .label-text { @apply text-xs font-bold text-slate-500 uppercase tracking-wider; }
-        .styled-input { @apply w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-lg focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all; }
-        .styled-select { @apply w-full p-3 bg-white border border-slate-200 rounded-xl text-base focus:ring-4 focus:ring-blue-500/20 outline-none cursor-pointer; }
-        .checkbox-item { @apply flex items-center gap-3 p-3 border rounded-xl hover:bg-slate-50 cursor-pointer transition-colors text-xs font-semibold; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full; }
+        body { font-family: 'Inter', -apple-system, sans-serif; }
+        .card { @apply bg-white p-6 rounded-lg border border-slate-200 mb-4; }
+        .section-title { @apply text-sm font-bold mb-4 border-b pb-1 uppercase tracking-widest; }
+        .label-text { @apply text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-1 block; }
+        .styled-input, .styled-select { 
+            @apply w-full p-2 bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all; 
+        }
+        .checkbox-item { @apply flex items-center gap-2 p-2 border border-slate-200 rounded text-[12px] hover:bg-slate-50 cursor-pointer bg-white; }
+        .btn-primary { @apply w-full bg-slate-900 text-white font-bold py-4 rounded text-sm uppercase tracking-widest hover:bg-black transition-all active:scale-95; }
+        .report-area { @apply w-full h-[85vh] p-8 text-[14px] font-mono border border-slate-300 rounded bg-white leading-relaxed outline-none focus:border-blue-500; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800 antialiased">
+<body class="bg-[#fcfcfc] min-h-screen text-slate-800 antialiased">
 
-    <div id="drugAlert" class="hidden bg-red-600 text-white p-3 text-center font-bold text-sm shadow-lg sticky top-0 z-50 animate-pulse uppercase tracking-widest">
-        ⚠️ Alert: VE/VCO2 Slope < 34 with suppressed HR/BP response. Consider Drug Modification.
+    <div id="drugAlert" class="hidden bg-amber-500 text-white p-2 text-center text-xs font-bold sticky top-0 z-50 shadow-sm">
+        CLINICAL NOTE: VE/VCO2 Slope < 34 with suppressed HR/BP. Consider drug modification.
     </div>
 
-    <div class="max-w-[1650px] mx-auto p-4 lg:p-8">
-        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div class="max-w-[1600px] mx-auto p-6">
+        <header class="mb-6 flex justify-between items-end border-b pb-4">
             <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tighter">CPET ANALYZER <span class="text-blue-600">V15</span></h1>
-                <p class="text-slate-500 font-medium uppercase text-xs tracking-[0.3em]">Pulmonary & Exercise Stress Test Integration</p>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">CPET ANALYZER <span class="text-blue-600 font-normal">V17</span></h1>
+                <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em]">English Clinical Pro Edition</p>
             </div>
-            <button onclick="window.location.reload()" class="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-black transition-all uppercase">Reset Form</button>
+            <button onclick="window.location.reload()" class="text-[10px] font-bold text-slate-400 hover:text-slate-600 uppercase">Reset Form</button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <div class="lg:col-span-5 space-y-2">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-4">
                 
-                <div class="card border-t-8 border-t-blue-500">
-                    <h2 class="section-title text-blue-600"><span>A</span> Pulmonary Function Test</h2>
-                    <div class="space-y-4">
-                        <div class="input-group">
-                            <span class="label-text">PFT Interpretation</span>
+                <div class="card border-l-4 border-blue-500">
+                    <h2 class="section-title text-blue-600">A. Pulmonary Function</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <span class="label-text">Interpretation</span>
                             <select id="pftStatus" class="styled-select">
                                 <option value="normal results">Normal results</option>
                                 <option value="at low flow rate (PEF<60%)">Low flow rate (PEF < 60%)</option>
@@ -48,139 +49,135 @@
                             </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="input-group"><span class="label-text">FEV1/FVC (%)</span><input id="fevfvc" type="number" step="0.1" placeholder="--" class="styled-input"></div>
-                            <div class="input-group"><span class="label-text">FVC (% predicted)</span><input id="fvc_pred" type="number" step="0.1" placeholder="--" class="styled-input"></div>
+                            <div><span class="label-text">FEV1/FVC (%)</span><input id="fevfvc" type="number" step="0.1" class="styled-input"></div>
+                            <div><span class="label-text">FVC (% predicted)</span><input id="fvc_pred" type="number" step="0.1" class="styled-input"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-t-8 border-t-slate-800">
-                    <h2 class="section-title text-slate-800"><span>B</span> Numeric Exercise Data</h2>
-                    <div class="grid grid-cols-3 gap-4 mb-8">
-                        <div class="input-group"><span class="label-text">Age</span><input id="age" type="number" class="styled-input"></div>
-                        <div class="input-group"><span class="label-text">Rest HR</span><input id="restHR" type="number" class="styled-input"></div>
-                        <div class="input-group"><span class="label-text">Peak HR</span><input id="peakHR" type="number" class="styled-input"></div>
+                <div class="card">
+                    <h2 class="section-title text-slate-800">B. Exercise Data (Numeric)</h2>
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div><span class="label-text">Age</span><input id="age" type="number" class="styled-input"></div>
+                        <div><span class="label-text">Rest HR</span><input id="restHR" type="number" class="styled-input"></div>
+                        <div><span class="label-text">Peak HR</span><input id="peakHR" type="number" class="styled-input"></div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 mb-8 p-5 bg-blue-50 rounded-2xl border border-blue-100">
-                        <div class="input-group"><span class="label-text text-blue-700">Peak VO2 (ml/min/kg)</span><input id="peakVO2_ml" type="number" step="0.1" class="styled-input" oninput="checkDrugAlert()"></div>
-                        <div class="input-group"><span class="label-text text-blue-700">Peak VO2 (L/min)</span><input id="peakVO2_L" type="number" step="0.01" class="styled-input"></div>
-                        <div class="input-group col-span-2"><span class="label-text text-blue-700">Predicted Peak VO2 (L/min)</span><input id="predVO2_L" type="number" step="0.01" class="styled-input"></div>
+                    <div class="grid grid-cols-2 gap-3 mb-4 p-4 bg-slate-50 rounded border border-slate-100">
+                        <div><span class="label-text text-blue-700">Peak VO2 (ml/min/kg)</span><input id="peakVO2_ml" type="number" step="0.1" class="styled-input" oninput="checkDrugAlert()"></div>
+                        <div><span class="label-text text-blue-700">Peak VO2 (L/min)</span><input id="peakVO2_L" type="number" step="0.01" class="styled-input"></div>
+                        <div class="col-span-2"><span class="label-text text-blue-700">Predicted Peak VO2 (L/min)</span><input id="predVO2_L" type="number" step="0.01" class="styled-input"></div>
                     </div>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-6">
-                        <div class="input-group"><span class="label-text">VE max (L/min)</span><input id="veMax" type="number" class="styled-input"></div>
-                        <div class="input-group"><span class="label-text">FEV1 (L)</span><input id="fev1" type="number" step="0.1" class="styled-input"></div>
-                        <div class="input-group"><span class="label-text">OUES</span><input id="oues" type="number" class="styled-input"></div>
-                        <div class="input-group"><span class="label-text">VE/VCO2 slope</span><input id="vevco2" type="number" step="0.1" class="styled-input" oninput="checkDrugAlert()"></div>
-                        <div class="input-group"><span class="label-text">O2 pulse</span><input id="o2p" type="number" step="0.1" class="styled-input"></div>
-                        <div class="input-group"><span class="label-text">Pred. O2 pulse</span><input id="predO2p" type="number" step="0.1" class="styled-input"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><span class="label-text">VE max (L/min)</span><input id="veMax" type="number" class="styled-input"></div>
+                        <div><span class="label-text">FEV1 (L)</span><input id="fev1" type="number" step="0.1" class="styled-input"></div>
+                        <div><span class="label-text">OUES</span><input id="oues" type="number" class="styled-input"></div>
+                        <div><span class="label-text">VE/VCO2 slope</span><input id="vevco2" type="number" step="0.1" class="styled-input" oninput="checkDrugAlert()"></div>
+                        <div><span class="label-text">O2 pulse</span><input id="o2p" type="number" step="0.1" class="styled-input"></div>
+                        <div><span class="label-text">Pred. O2 pulse</span><input id="predO2p" type="number" step="0.1" class="styled-input"></div>
                     </div>
                 </div>
 
-                <div class="card bg-slate-900 text-white">
-                    <h2 class="section-title text-blue-400 border-slate-700"><span>C</span> Qualitative Findings</h2>
-                    <div class="space-y-6">
-                        <div class="input-group">
-                            <span class="label-text text-slate-400">EKG Findings (Point 5)</span>
-                            <select id="ekgStatus" class="styled-select text-slate-900" onchange="toggleField('ekgOtherText', this.value==='OTHER')">
+                <div class="card bg-indigo-50/50 border-indigo-100">
+                    <h2 class="section-title text-indigo-700">C. Qualitative Findings</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="label-text">EKG Findings (Point 5)</span>
+                            <select id="ekgStatus" class="styled-select" onchange="toggleField('ekgOtherText', this.value==='OTHER')">
                                 <option value="no significant arrythmia or ST-T change during examination">Normal / No ST-T changes</option>
-                                <option value="occasional VPCs and APCs noted during exercise">Occasional VPCs/APCs during exercise</option>
+                                <option value="occasional VPCs and APCs noted during exercise">Occasional VPCs/APCs</option>
                                 <option value="OTHER">Other (Custom Text)</option>
                             </select>
-                            <input id="ekgOtherText" type="text" placeholder="Specify EKG findings..." class="hidden styled-input mt-2 border-orange-500 bg-orange-50 text-slate-900">
+                            <input id="ekgOtherText" type="text" placeholder="Specify EKG..." class="hidden styled-input mt-2 border-amber-300 bg-amber-50">
                         </div>
-                        <div class="input-group">
-                            <span class="label-text text-slate-400">Chronotropic Response (Point 6)</span>
-                            <select id="option6" class="styled-select text-slate-900" onchange="checkDrugAlert()">
-                                <option value="chronotropic incompetence was noted">Chronotropic incompetence noted</option>
-                                <option value="Steep HR vs VO2 response was noted">Steep HR vs VO2 response noted</option>
-                            </select>
-                        </div>
-                        <div class="p-4 bg-slate-800 rounded-xl">
-                            <span class="label-text block mb-3 text-blue-300">10. Exercise Termination</span>
-                            <div class="grid grid-cols-2 gap-2 mb-3">
-                                <label class="checkbox-item bg-slate-700 border-slate-600"><input type="checkbox" name="termReason" value="dyspnea"> Dyspnea</label>
-                                <label class="checkbox-item bg-slate-700 border-slate-600"><input type="checkbox" name="termReason" value="leg fatigue"> Leg fatigue</label>
-                                <label class="checkbox-item bg-slate-700 border-slate-600"><input type="checkbox" name="termReason" value="R reached"> R reached</label>
-                                <label class="checkbox-item bg-slate-700 border-slate-600"><input type="checkbox" name="termReason" value="BP drop"> BP drop</label>
-                            </div>
-                            <select id="termResult" class="styled-select text-slate-900 text-xs">
-                                <option value="maximal">Maximal result</option>
-                                <option value="submaximal">Submaximal result</option>
-                            </select>
-                        </div>
-                        <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
-                            <span class="label-text block mb-3 text-blue-300">11. Thresholds (AT/RCP)</span>
-                            <div class="flex gap-6 mb-4 font-bold text-xs uppercase tracking-widest">
-                                <label class="flex items-center gap-2 cursor-pointer text-blue-400"><input type="radio" name="atObserved" value="yes" checked onchange="handleATToggle()"> Observed</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-rose-400"><input type="radio" name="atObserved" value="no" onchange="handleATToggle()"> Not reached</label>
-                            </div>
-                            <div id="atInputs" class="grid grid-cols-2 gap-4">
-                                <input id="at_ml" type="number" step="0.1" placeholder="AT ml/min/kg" class="styled-input text-slate-900">
-                                <input id="rcp_ml" type="number" step="0.1" placeholder="RCP ml/min/kg" class="styled-input text-slate-900">
-                            </div>
-                            <div id="atNoObservedArea" class="hidden space-y-3">
-                                <select id="atNoReason" class="styled-select text-slate-900 bg-rose-50" onchange="toggleField('atNoOtherText', this.value==='OTHER')">
-                                    <option value="AT/RCP not reached">AT/RCP not reached</option>
-                                    <option value="AT/RCP undeterminated due to uneven breathing">AT/RCP undeterminated (Uneven breathing)</option>
-                                    <option value="OTHER">Other (Custom Text)</option>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <span class="label-text">Chronotropic (Pt 6)</span>
+                                <select id="option6" class="styled-select" onchange="checkDrugAlert()">
+                                    <option value="chronotropic incompetence was noted">CI noted</option>
+                                    <option value="Steep HR vs VO2 response was noted">Steep response</option>
                                 </select>
-                                <input id="atNoOtherText" type="text" placeholder="Reason..." class="hidden styled-input border-orange-500 bg-orange-50 text-slate-900">
+                            </div>
+                            <div>
+                                <span class="label-text">Termination (Pt 10)</span>
+                                <select id="termResult" class="styled-select">
+                                    <option value="maximal">Maximal result</option>
+                                    <option value="submaximal">Submaximal result</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="flex gap-4">
-                            <label class="checkbox-item flex-1 bg-slate-800 border-slate-700"><input type="checkbox" id="check12"> 12. Delayed HR Rec.</label>
-                            <label class="checkbox-item flex-1 bg-slate-800 border-slate-700"><input type="checkbox" id="check13" onchange="checkDrugAlert()"> 13. Inadequate BP</label>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="checkbox-item"><input type="checkbox" name="termReason" value="dyspnea"> Dyspnea</label>
+                            <label class="checkbox-item"><input type="checkbox" name="termReason" value="leg fatigue"> Leg fatigue</label>
+                            <label class="checkbox-item"><input type="checkbox" name="termReason" value="R reached"> R reached</label>
+                            <label class="checkbox-item"><input type="checkbox" name="termReason" value="BP drop"> BP drop</label>
+                        </div>
+
+                        <div class="p-3 bg-white border border-indigo-200 rounded">
+                            <span class="label-text text-indigo-700">Thresholds (Point 11)</span>
+                            <div class="flex gap-4 mb-2">
+                                <label class="flex items-center gap-1 text-[11px] font-bold text-slate-600"><input type="radio" name="atObserved" value="yes" checked onchange="handleATToggle()"> Observed</label>
+                                <label class="flex items-center gap-1 text-[11px] font-bold text-slate-600"><input type="radio" name="atObserved" value="no" onchange="handleATToggle()"> Not Observed</label>
+                            </div>
+                            <div id="atInputs" class="grid grid-cols-2 gap-2">
+                                <input id="at_ml" type="number" step="0.1" placeholder="AT ml/min/kg" class="styled-input">
+                                <input id="rcp_ml" type="number" step="0.1" placeholder="RCP ml/min/kg" class="styled-input">
+                            </div>
+                            <div id="atNoObservedArea" class="hidden space-y-2">
+                                <select id="atNoReason" class="styled-select" onchange="toggleField('atNoOtherText', this.value==='OTHER')">
+                                    <option value="AT/RCP not reached">AT/RCP not reached</option>
+                                    <option value="AT/RCP undeterminated due to uneven breathing">Uneven breathing</option>
+                                    <option value="OTHER">Other reason</option>
+                                </select>
+                                <input id="atNoOtherText" type="text" placeholder="Enter reason..." class="hidden styled-input border-amber-300 bg-amber-50">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <label class="checkbox-item flex-1"><input type="checkbox" id="check12"> 12. Delayed HR Rec.</label>
+                            <label class="checkbox-item flex-1"><input type="checkbox" id="check13" onchange="checkDrugAlert()"> 13. Inadequate BP</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-t-8 border-t-emerald-600">
-                    <h2 class="section-title text-emerald-700"><span>D</span> Conclusions & Suggestions</h2>
-                    <div class="space-y-8">
-                        <div>
-                            <span class="label-text text-emerald-600 mb-3 block">Conclusions</span>
-                            <div class="space-y-2">
-                                <label class="checkbox-item"><input type="checkbox" id="con1"> 1. Abnormal (FAI severity auto-included)</label>
-                                <label class="checkbox-item"><input type="checkbox" id="con2"> 2. Essentially normal</label>
-                                <label class="checkbox-item"><input type="checkbox" id="con3"> 3. Inconclusive testing</label>
-                                <div class="checkbox-item flex-wrap">
-                                    <input type="checkbox" id="con4"> 
-                                    <select id="con4_state" class="mx-2 p-1 border rounded"><option>Improved</option><option>Stationary</option><option>Deteriorated</option></select>
-                                    <span class="text-[10px] uppercase">since</span>
-                                    <input id="prevDate" type="date" class="mx-2 p-1 border rounded text-xs">
-                                </div>
+                <div class="card border-l-4 border-emerald-500">
+                    <h2 class="section-title text-emerald-700">D. Conclusions & Suggestions</h2>
+                    <div class="space-y-4">
+                        <div class="space-y-1">
+                            <label class="checkbox-item"><input type="checkbox" id="con1"> 1. Abnormal (Auto-FAI severity)</label>
+                            <label class="checkbox-item"><input type="checkbox" id="con2"> 2. Essentially normal</label>
+                            <label class="checkbox-item"><input type="checkbox" id="con3"> 3. Inconclusive testing</label>
+                            <div class="checkbox-item flex-wrap">
+                                <input type="checkbox" id="con4"> 
+                                <select id="con4_state" class="text-[10px] p-0.5 border rounded mx-1"><option>Improved</option><option>Stationary</option><option>Deteriorated</option></select>
+                                <span class="text-[10px] uppercase font-bold">since</span>
+                                <input id="prevDate" type="date" class="text-[10px] p-0.5 border rounded mx-1">
                             </div>
                         </div>
-                        <div class="pt-6 border-t">
-                            <span class="label-text text-emerald-600 mb-3 block">Suggestions</span>
-                            <div class="space-y-4">
-                                <div class="space-y-2">
-                                    <label class="checkbox-item"><input type="checkbox" id="sug1"> 1. Phase II CPT with:</label>
-                                    <div class="grid grid-cols-2 gap-2 pl-8">
-                                        <label class="checkbox-item py-1"><input type="checkbox" class="sug_opt" value="RPE guided intensity"> RPE intensity</label>
-                                        <label class="checkbox-item py-1"><input type="checkbox" class="sug_opt" value="breathing retraining"> breathing</label>
-                                        <label class="checkbox-item py-1"><input type="checkbox" class="sug_opt" value="resistance training"> resistance</label>
-                                        <label class="checkbox-item py-1"><input type="checkbox" class="sug_opt" value="endurance training"> endurance</label>
-                                    </div>
-                                </div>
-                                <label class="checkbox-item"><input type="checkbox" id="sug2"> 2. Drug modification.</label>
+                        <div class="pt-2 border-t border-slate-100 space-y-2">
+                            <label class="checkbox-item"><input type="checkbox" id="sug1"> 1. Phase II CPT with:</label>
+                            <div class="grid grid-cols-2 gap-2 pl-6">
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600"><input type="checkbox" class="sug_opt" value="RPE guided intensity"> RPE intensity</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600"><input type="checkbox" class="sug_opt" value="breathing retraining"> breathing</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600"><input type="checkbox" class="sug_opt" value="resistance training"> resistance</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600"><input type="checkbox" class="sug_opt" value="endurance training"> endurance</label>
                             </div>
+                            <label class="checkbox-item"><input type="checkbox" id="sug2"> 2. Drug modification</label>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="generateReport()" class="w-full bg-blue-600 text-white font-black py-8 rounded-[2.5rem] shadow-2xl hover:bg-blue-700 transition-all uppercase tracking-[0.3em] active:scale-95 text-2xl">
-                    Generate Full Report
-                </button>
+                <button onclick="generateReport()" class="btn-primary">Generate Final Report</button>
             </div>
 
             <div class="lg:col-span-7">
-                <div class="sticky top-10">
-                    <div class="flex justify-between items-center mb-6 px-4">
-                        <h2 class="font-black text-slate-400 text-xs tracking-widest uppercase italic">Live Report Preview</h2>
-                        <button onclick="copyToClipboard()" class="bg-blue-600 text-white px-12 py-4 rounded-full font-black hover:bg-blue-700 shadow-xl transition-all hover:scale-105 active:scale-95 uppercase text-xs">Copy to Clipboard</button>
+                <div class="sticky top-6">
+                    <div class="flex justify-between items-center mb-2 px-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Report Preview</span>
+                        <button onclick="copyToClipboard()" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-wider">Copy To Clipboard</button>
                     </div>
-                    <textarea id="reportText" class="w-full h-[88vh] p-12 text-[15.5px] font-mono border-2 border-slate-200 rounded-[4rem] bg-white leading-relaxed shadow-2xl outline-none focus:border-blue-500 custom-scrollbar" readonly></textarea>
+                    <textarea id="reportText" class="report-area shadow-sm" readonly></textarea>
                 </div>
             </div>
         </div>
@@ -193,14 +190,12 @@
             toggleField('atInputs', isObserved);
             toggleField('atNoObservedArea', !isObserved);
         }
-
         function checkDrugAlert() {
             const slope = parseFloat(document.getElementById('vevco2').value) || 0;
             const isCI = document.getElementById('option6').value === 'chronotropic incompetence was noted';
             const isInadequateBP = document.getElementById('check13').checked;
             toggleField('drugAlert', (slope > 0 && slope < 34 && (isCI || isInadequateBP)));
         }
-
         function getFAISeverity(fai) {
             if (fai <= 28) return "no significant";
             if (fai <= 40) return "mild";
@@ -210,7 +205,7 @@
         }
 
         function generateReport() {
-            const pftPart = `A: pulmonary function test: ${document.getElementById('pftStatus').value}\n1. FEV1/FVC=${document.getElementById('fevfvc').value || "__"}%\n2. FVC:${document.getElementById('fvc_pred').value || "__"}% predicted value\n`;
+            const pftPart = `A: pulmonary function test: ${document.getElementById('pftStatus').value}\n1. FEV1/FVC=${document.getElementById('fevfvc').value || "__"}%\n2. FVC:${document.getElementById('fvc_pred').value || "__"}% predicted value\n\n`;
 
             const age = parseFloat(document.getElementById('age').value);
             const restHR = parseFloat(document.getElementById('restHR').value) || 0;
@@ -221,33 +216,17 @@
             const o2p = parseFloat(document.getElementById('o2p').value) || 0;
             const predO2p = parseFloat(document.getElementById('predO2p').value) || 1;
 
-            const ciValue = age ? ((peakHR - restHR) / ((220 - age) - restHR)).toFixed(2) : "____";
-            const pPeakHR = age ? (peakHR * 100 / (220 - age)).toFixed(1) : "____";
-            const peakMETs = (peakVO2_ml / 3.5).toFixed(1);
-            const pPeakVO2 = (peakVO2_L * 100 / predVO2_L).toFixed(1);
+            const ciVal = age ? ((peakHR - restHR) / ((220 - age) - restHR)).toFixed(2) : "____";
+            const pPHR = age ? (peakHR * 100 / (220 - age)).toFixed(1) : "____";
+            const ppvo2 = (peakVO2_L * 100 / predVO2_L).toFixed(1);
             const fai = (100 - (peakVO2_L / predVO2_L * 100)).toFixed(1);
             const di = (parseFloat(document.getElementById('veMax').value) / (40 * parseFloat(document.getElementById('fev1').value) || 1)).toFixed(2);
-            const br = (1 - di).toFixed(2);
-            const pO2p = (o2p * 100 / predO2p).toFixed(1);
 
-            const ekgFinal = document.getElementById('ekgStatus').value === 'OTHER' ? document.getElementById('ekgOtherText').value : document.getElementById('ekgStatus').value;
-            const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value);
-            const termReasonText = reasons.length > 0 ? reasons.join(", ") : "____";
-
-            const isAtObserved = document.querySelector('input[name="atObserved"]:checked').value === 'yes';
-            let atLine = "";
-            if (isAtObserved) {
-                const atV = parseFloat(document.getElementById('at_ml').value) || 0;
-                const rcpV = parseFloat(document.getElementById('rcp_ml').value) || 0;
-                const atPct = peakVO2_ml > 0 ? (atV * 100 / peakVO2_ml).toFixed(1) : "0.0";
-                const rcpPct = peakVO2_ml > 0 ? (rcpV * 100 / peakVO2_ml).toFixed(1) : "0.0";
-                atLine = `11. AT was about ${atV} ml/min/kg (${atPct}% of peak VO2); RCP was about ${rcpV} ml/min/kg (${rcpPct}% of peak VO2)`;
-            } else {
-                atLine = `11. ${document.getElementById('atNoReason').value === 'OTHER' ? document.getElementById('atNoOtherText').value : document.getElementById('atNoReason').value}`;
-            }
-
-            const check12 = document.getElementById('check12').checked ? `12. Delayed heart rate recovery was observed\n` : "";
-            const check13 = document.getElementById('check13').checked ? `13. Inadequate BP response was noted\n` : "";
+            const ekg = document.getElementById('ekgStatus').value === 'OTHER' ? document.getElementById('ekgOtherText').value : document.getElementById('ekgStatus').value;
+            const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value).join(", ") || "____";
+            
+            const isAT = document.querySelector('input[name="atObserved"]:checked').value === 'yes';
+            let atLine = isAT ? `11. AT was about ${document.getElementById('at_ml').value || "0"} ml/min/kg (${(parseFloat(document.getElementById('at_ml').value)*100/peakVO2_ml || 0).toFixed(1)}% of peak VO2); RCP was about ${document.getElementById('rcp_ml').value || "0"} ml/min/kg (${(parseFloat(document.getElementById('rcp_ml').value)*100/peakVO2_ml || 0).toFixed(1)}% of peak VO2)` : `11. ${document.getElementById('atNoReason').value === 'OTHER' ? document.getElementById('atNoOtherText').value : document.getElementById('atNoReason').value}`;
 
             let conText = "\nConclusion:\n";
             if (document.getElementById('con1').checked) conText += `- Abnormal exercise testing with ${getFAISeverity(fai)} FAI; the cause was due to decreased cardiac and pulmonary capacity;\n`;
@@ -256,28 +235,10 @@
             if (document.getElementById('con4').checked) conText += `- ${document.getElementById('con4_state').value} compared to previous exam on ${document.getElementById('prevDate').value || "____"}\n`;
 
             let sugText = "\nSuggestion:\n";
-            if (document.getElementById('sug1').checked) {
-                const opts = Array.from(document.querySelectorAll('.sug_opt:checked')).map(c => c.value).join(", ");
-                sugText += `1. continue phase II CPT with {${opts || "____"}}\n`;
-            }
+            if (document.getElementById('sug1').checked) sugText += `1. continue phase II CPT with {${Array.from(document.querySelectorAll('.sug_opt:checked')).map(c => c.value).join(", ") || "____"}}\n`;
             if (document.getElementById('sug2').checked) sugText += `2. Drug modification.\n`;
 
-            const finalOutput = `${pftPart}\nB: CPTX result
-1. max HR:${peakHR};% predicted peak HR=${pPeakHR}%
-2. peak VO2:${peakVO2_ml}ml/min/kg; peak MET:${peakMETs}METs;% predicted peak VO2:${pPeakVO2}%
-3. % FAI=${fai}%
-4. Dyspnea index=${di};Breathing reserve=${br}
-5. EKG: ${ekgFinal || "____"}
-6. ${document.getElementById('option6').value}; CI=${ciValue} (nl<0.8, if on BB<0.6)
-7. OUES: ${document.getElementById('oues').value} ml/min
-8. VE/VCO2 slope: ${document.getElementById('vevco2').value}
-9. O2 pulse: ${o2p} ; ${pO2p}% of predicted
-10. Exercise was terminated due to ${termReasonText}, ${document.getElementById('termResult').value}
-${atLine}
-${line12}${line13}14. normal SpO2 response during exam
-${conText}${sugText}`;
-
-            document.getElementById('reportText').value = finalOutput;
+            document.getElementById('reportText').value = `${pftPart}B: CPTX result\n1. max HR:${peakHR};% predicted peak HR=${pPHR}%\n2. peak VO2:${peakVO2_ml}ml/min/kg; peak MET:${(peakVO2_ml/3.5).toFixed(1)}METs;% predicted peak VO2:${ppvo2}%\n3. % FAI=${fai}%\n4. Dyspnea index=${di};Breathing reserve=${(1-di).toFixed(2)}\n5. EKG: ${ekg || "____"}\n6. ${document.getElementById('option6').value}; CI=${ciVal} (nl<0.8, if on BB<0.6)\n7. OUES: ${document.getElementById('oues').value} ml/min\n8. VE/VCO2 slope: ${document.getElementById('vevco2').value}\n9. O2 pulse: ${o2p} ; ${(o2p*100/predO2p).toFixed(1)}% of predicted\n10. Exercise was terminated due to ${reasons}, ${document.getElementById('termResult').value} result\n${atLine}\n${document.getElementById('check12').checked ? '12. Delayed HR recovery observed\n' : ''}${document.getElementById('check13').checked ? '13. Inadequate BP response noted\n' : ''}14. normal SpO2 response during exam${conText}${sugText}`;
         }
 
         function copyToClipboard() {
@@ -285,7 +246,7 @@ ${conText}${sugText}`;
             if (!copyText.value) return;
             copyText.select();
             document.execCommand("copy");
-            alert("Report copied with corrected units!");
+            alert("Report copied successfully.");
         }
     </script>
 </body>
