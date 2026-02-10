@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFT & CPET 報告生成器 V9</title>
+    <title>PFT & CPET 報告生成器 V10</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen pb-10 font-sans text-slate-800">
     <div class="max-w-[1400px] mx-auto mt-6 bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
-        <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
+        <div class="bg-indigo-900 p-5 text-white flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V9</h1>
-                <p class="text-xs text-slate-400">肺功能與心肺運動測試整合報告系統</p>
+                <h1 class="text-xl font-bold tracking-tight text-indigo-300">PFT & CPET Report System V10</h1>
+                <p class="text-xs text-slate-400 font-medium">支援 EKG 自定義描述與 PFT 整合報告</p>
             </div>
         </div>
 
@@ -19,7 +19,7 @@
             <div class="lg:col-span-5 space-y-6">
                 
                 <section class="p-4 bg-blue-50 rounded-xl border border-blue-100 shadow-sm">
-                    <h2 class="text-sm font-bold text-blue-800 mb-3 border-b border-blue-200 pb-1">A: Pulmonary Function Test</h2>
+                    <h2 class="text-sm font-bold text-blue-800 mb-3 border-b border-blue-200 pb-1 text-center">A: Pulmonary Function Test</h2>
                     <div class="space-y-3">
                         <label class="text-xs font-bold text-slate-600 block">PFT 結果判定</label>
                         <select id="pftStatus" class="w-full p-2 border rounded text-sm bg-white outline-blue-500">
@@ -30,87 +30,89 @@
                         </select>
                         <div class="grid grid-cols-2 gap-3">
                             <label class="text-xs font-bold text-slate-600 uppercase">FEV1/FVC (%)
-                                <input id="fevfvc" type="number" step="0.1" class="w-full mt-1 p-2 border rounded">
+                                <input id="fevfvc" type="number" step="0.1" class="w-full mt-1 p-2 border rounded text-base">
                             </label>
                             <label class="text-xs font-bold text-slate-600 uppercase">FVC (% pred.)
-                                <input id="fvc_pred" type="number" step="0.1" class="w-full mt-1 p-2 border rounded">
+                                <input id="fvc_pred" type="number" step="0.1" class="w-full mt-1 p-2 border rounded text-base">
                             </label>
                         </div>
                     </div>
                 </section>
 
                 <section class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                    <h2 class="text-sm font-bold text-slate-700 mb-3 border-b pb-1">B: CPTX - 基礎數據</h2>
+                    <h2 class="text-sm font-bold text-slate-700 mb-3 border-b pb-1 text-center">B: CPTX - 基礎數據</h2>
                     <div class="grid grid-cols-3 gap-3 mb-4">
-                        <label class="text-xs font-bold text-slate-500">年齡 <input id="age" type="number" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="text-xs font-bold text-slate-500">Rest HR <input id="restHR" type="number" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="text-xs font-bold text-slate-500">Peak HR <input id="peakHR" type="number" class="w-full p-2 border rounded mt-1"></label>
+                        <label class="text-xs font-bold text-slate-500">年齡 <input id="age" type="number" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="text-xs font-bold text-slate-500">Rest HR <input id="restHR" type="number" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="text-xs font-bold text-slate-500">Peak HR <input id="peakHR" type="number" class="w-full p-2 border rounded mt-1 text-base"></label>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mb-4">
-                        <label class="text-xs font-bold text-slate-500">Peak VO2 (ml/kg) <input id="peakVO2_ml" type="number" step="0.1" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="text-xs font-bold text-slate-500">Peak VO2 (L/min) <input id="peakVO2_L" type="number" step="0.1" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="text-xs font-bold text-slate-500">Pred. VO2 (L/min) <input id="predVO2_L" type="number" step="0.1" class="w-full p-2 border rounded mt-1 col-span-2"></label>
+                        <label class="text-xs font-bold text-slate-500">Peak VO2 (ml/kg) <input id="peakVO2_ml" type="number" step="0.1" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="text-xs font-bold text-slate-500">Peak VO2 (L/min) <input id="peakVO2_L" type="number" step="0.1" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="text-xs font-bold text-slate-500">Pred. VO2 (L/min) <input id="predVO2_L" type="number" step="0.1" class="w-full p-2 border rounded mt-1 col-span-2 text-base"></label>
                     </div>
                     <div class="grid grid-cols-2 gap-3 text-xs">
-                        <label class="font-bold text-slate-500">VE max <input id="veMax" type="number" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="font-bold text-slate-500">FEV1 (L) <input id="fev1" type="number" step="0.1" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="font-bold text-slate-500">OUES <input id="oues" type="number" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="font-bold text-slate-500">VE/VCO2 slope <input id="vevco2" type="number" step="0.1" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="font-bold text-slate-500">O2 pulse <input id="o2p" type="number" step="0.1" class="w-full p-2 border rounded mt-1"></label>
-                        <label class="font-bold text-slate-500">Pred. O2 pulse <input id="predO2p" type="number" step="0.1" class="w-full p-2 border rounded mt-1"></label>
+                        <label class="font-bold text-slate-500">VE max <input id="veMax" type="number" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="font-bold text-slate-500">FEV1 (L) <input id="fev1" type="number" step="0.1" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="font-bold text-slate-500">OUES <input id="oues" type="number" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="font-bold text-slate-500">VE/VCO2 slope <input id="vevco2" type="number" step="0.1" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="font-bold text-slate-500">O2 pulse <input id="o2p" type="number" step="0.1" class="w-full p-2 border rounded mt-1 text-base"></label>
+                        <label class="font-bold text-slate-500">Pred. O2 pulse <input id="predO2p" type="number" step="0.1" class="w-full p-2 border rounded mt-1 text-base"></label>
                     </div>
                 </section>
 
                 <section class="p-4 bg-indigo-50 rounded-xl border border-indigo-100 space-y-4">
-                    <h2 class="text-sm font-bold text-indigo-700 border-b pb-1">B: CPTX - 定性描述</h2>
+                    <h2 class="text-sm font-bold text-indigo-700 border-b pb-1 text-center">B: CPTX - 定性描述</h2>
                     
-                    <div>
-                        <label class="text-xs font-bold text-slate-600 block mb-1">5. EKG 心電圖表現</label>
-                        <select id="ekgStatus" class="w-full p-2 border rounded text-xs bg-white outline-indigo-500">
+                    <div class="bg-white p-3 rounded-lg border border-indigo-200">
+                        <label class="text-xs font-bold text-indigo-800 block mb-2 tracking-wide uppercase">5. EKG 心電圖表現</label>
+                        <select id="ekgStatus" class="w-full p-2 border rounded text-xs bg-slate-50 outline-indigo-500 mb-2" onchange="toggleEKGOther()">
                             <option value="no significant arrythmia or ST-T change during examination">no significant arrythmia or ST-T change during examination</option>
                             <option value="occasional VPCs and APCs noted during exercise">occasional VPCs and APCs noted during exercise</option>
+                            <option value="OTHER">其他 (自由填寫 / Custom Text)</option>
                         </select>
+                        <input id="ekgOtherText" type="text" placeholder="請在此輸入 EKG 描述..." class="hidden w-full p-2 border-2 border-orange-300 rounded text-xs bg-orange-50 placeholder-orange-300 animate-pulse">
                     </div>
 
                     <div class="grid grid-cols-1 gap-4">
-                        <div class="p-2 bg-white rounded border">
-                            <p class="text-[10px] font-bold text-slate-500 mb-1">10. 終止原因</p>
-                            <div class="flex flex-wrap gap-2 text-[10px] mb-2">
-                                <label><input type="checkbox" name="termReason" value="dyspnea"> dyspnea</label>
-                                <label><input type="checkbox" name="termReason" value="leg fatigue"> leg fatigue</label>
-                                <label><input type="checkbox" name="termReason" value="R reached"> R reached</label>
-                                <label><input type="checkbox" name="termReason" value="BP drop"> BP drop</label>
+                        <div class="p-3 bg-white rounded border border-slate-200">
+                            <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase">10. 終止原因與性質</p>
+                            <div class="grid grid-cols-2 gap-2 text-[10px] mb-3">
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="dyspnea"> dyspnea</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="leg fatigue"> leg fatigue</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="R reached"> R reached</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="BP drop"> BP drop</label>
                             </div>
-                            <select id="termResult" class="w-full p-1 border rounded text-[10px]">
+                            <select id="termResult" class="w-full p-1.5 border rounded text-[11px] bg-slate-50">
                                 <option value="maximal">maximal result</option>
                                 <option value="submaximal">submaximal result</option>
                             </select>
                         </div>
 
-                        <div class="p-2 bg-white rounded border">
-                            <p class="text-[10px] font-bold text-indigo-700 mb-1">11. AT/RCP 判定</p>
-                            <div class="flex gap-4 text-[10px] mb-1">
-                                <label><input type="radio" name="atObserved" value="yes" checked onchange="toggleAT(true)"> 觀察到</label>
-                                <label><input type="radio" name="atObserved" value="no" onchange="toggleAT(false)"> 未觀察到</label>
+                        <div class="p-3 bg-white rounded border border-slate-200">
+                            <p class="text-[10px] font-bold text-indigo-700 mb-2 uppercase">11. AT/RCP 判定</p>
+                            <div class="flex gap-4 text-[11px] mb-2 font-semibold">
+                                <label class="flex items-center gap-1 cursor-pointer text-blue-600"><input type="radio" name="atObserved" value="yes" checked onchange="toggleAT(true)"> 觀察到</label>
+                                <label class="flex items-center gap-1 cursor-pointer text-rose-600"><input type="radio" name="atObserved" value="no" onchange="toggleAT(false)"> 未觀察到</label>
                             </div>
                             <div id="atInputs" class="grid grid-cols-2 gap-2">
-                                <input id="at_ml" type="number" step="0.1" placeholder="AT ml" class="p-1 border rounded text-xs">
-                                <input id="rcp_ml" type="number" step="0.1" placeholder="RCP ml" class="p-1 border rounded text-xs">
+                                <input id="at_ml" type="number" step="0.1" placeholder="AT ml/kg" class="p-2 border rounded text-xs bg-slate-50">
+                                <input id="rcp_ml" type="number" step="0.1" placeholder="RCP ml/kg" class="p-2 border rounded text-xs bg-slate-50">
                             </div>
-                            <select id="atNoReason" class="hidden w-full mt-1 p-1 border rounded text-[10px] bg-rose-50">
+                            <select id="atNoReason" class="hidden w-full mt-1 p-2 border border-rose-200 rounded text-xs bg-rose-50 text-rose-700">
                                 <option value="AT/RCP not reached">AT/RCP not reached</option>
                                 <option value="AT/RCP undeterminated due to uneven breathing">AT/RCP undeterminated due to uneven breathing</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap gap-4 text-xs">
-                        <label><input type="checkbox" id="check12"> 12. Delayed HR recovery</label>
-                        <label><input type="checkbox" id="check13"> 13. Inadequate BP</label>
+                    <div class="flex flex-wrap gap-4 text-xs font-bold text-slate-600">
+                        <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="check12"> 12. Delayed HR recovery</label>
+                        <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="check13"> 13. Inadequate BP response</label>
                     </div>
                 </section>
 
-                <button onclick="generateReport()" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl shadow-xl hover:bg-black transition-all uppercase tracking-widest">
+                <button onclick="generateReport()" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl shadow-xl hover:bg-black transition-all uppercase tracking-[0.2em] active:scale-95">
                     Generate Integrated Report
                 </button>
             </div>
@@ -118,10 +120,10 @@
             <div class="lg:col-span-7">
                 <div class="sticky top-6">
                     <div class="flex justify-between items-center mb-2 px-2">
-                        <h2 class="font-bold text-slate-600 text-xs tracking-widest uppercase">Clinical Final Report</h2>
-                        <button onclick="copyToClipboard()" class="bg-indigo-600 text-white px-8 py-2 rounded-full text-xs font-bold hover:bg-indigo-700 shadow-lg">COPY REPORT</button>
+                        <h2 class="font-bold text-slate-500 text-xs tracking-[0.3em] uppercase">CLINICAL FINAL REPORT</h2>
+                        <button onclick="copyToClipboard()" class="bg-indigo-600 text-white px-10 py-2 rounded-full text-xs font-bold hover:bg-indigo-700 shadow-lg transition-transform hover:scale-105">COPY TO CLIPBOARD</button>
                     </div>
-                    <textarea id="reportText" class="w-full h-[880px] p-8 text-[13px] font-mono border-2 border-slate-300 rounded-3xl bg-white leading-relaxed shadow-inner outline-none focus:border-indigo-400" readonly></textarea>
+                    <textarea id="reportText" class="w-full h-[880px] p-8 text-[13.5px] font-mono border-2 border-slate-300 rounded-3xl bg-white leading-relaxed shadow-inner outline-none focus:border-indigo-400" readonly></textarea>
                 </div>
             </div>
         </div>
@@ -131,6 +133,16 @@
         function toggleAT(observed) {
             document.getElementById('atInputs').style.display = observed ? 'grid' : 'none';
             document.getElementById('atNoReason').style.display = observed ? 'none' : 'block';
+        }
+
+        function toggleEKGOther() {
+            const status = document.getElementById('ekgStatus').value;
+            const otherInput = document.getElementById('ekgOtherText');
+            if (status === 'OTHER') {
+                otherInput.classList.remove('hidden');
+            } else {
+                otherInput.classList.add('hidden');
+            }
         }
 
         function generateReport() {
@@ -167,9 +179,15 @@
             const br = (1 - di).toFixed(2);
             const pO2p = o2p !== "__" ? (parseFloat(o2p) * 100 / predO2p).toFixed(1) : "____";
 
-            // Description Logic
+            // EKG Logic (New in V10)
+            const ekgSel = document.getElementById('ekgStatus').value;
+            const ekgFinal = ekgSel === 'OTHER' ? document.getElementById('ekgOtherText').value : ekgSel;
+
+            // Point 10
             const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value);
             const termReasonText = reasons.length > 0 ? reasons.join(", ") : "____";
+
+            // Point 11
             const isAtObserved = document.querySelector('input[name="atObserved"]:checked').value === 'yes';
             let atLine = "";
             if (isAtObserved) {
@@ -177,7 +195,7 @@
                 const rcpV = parseFloat(document.getElementById('rcp_ml').value) || 0;
                 const atPct = peakVO2_ml > 0 ? (atV * 100 / peakVO2_ml).toFixed(1) : "0.0";
                 const rcpPct = peakVO2_ml > 0 ? (rcpV * 100 / peakVO2_ml).toFixed(1) : "0.0";
-                atLine = `11. AT was about ${atV} ml/kg/min (${atPct}% of peak VO2); RCP was about ${rcpV} ml/kg/min (${rcpPct}% of peak VO2)`;
+                atLine = `11. AT was about ${atV} ml/kg/min (${atPct}% of peak VO2); RCP was about ${rcpValue} ml/kg/min (${rcpPct}% of peak VO2)`;
             } else {
                 atLine = `11. ${document.getElementById('atNoReason').value}`;
             }
@@ -196,7 +214,7 @@ B: CPTX result
 2. peak VO2:${peakVO2_ml}ml/kg/min; peak MET:${peakMETs}METs;% predicted peak VO2:${pPeakVO2}%
 3. % FAI=${fai}%
 4. Dyspnea index=${di};Breathing reserve=${br}
-5. EKG: ${document.getElementById('ekgStatus').value}
+5. EKG: ${ekgFinal || "____"}
 6. ${document.getElementById('option6')?.value || 'chronotropic incompetence was noted'}; CI=${ciDisplay} (nl<0.8, if on BB<0.6)
 7. OUES: ${oues} ml/min
 8. VE/VCO2 slope: ${vevco2}
@@ -213,7 +231,7 @@ ${line12}${line13}14. normal SpO2 response during exam`;
             if (!copyText.value) return;
             copyText.select();
             document.execCommand("copy");
-            alert("完整報告已複製！");
+            alert("完整報告內容已複製！");
         }
     </script>
 </body>
