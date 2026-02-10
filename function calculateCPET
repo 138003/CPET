@@ -1,28 +1,105 @@
-function calculateCPET() {
-    // 取得輸入值
-    const age = parseFloat(document.getElementById('age').value);
-    const peakHR = parseFloat(document.getElementById('peakHR').value);
-    const peakVO2 = parseFloat(document.getElementById('peakVO2').value);
-    const predVO2 = parseFloat(document.getElementById('predVO2').value);
-    const veMax = parseFloat(document.getElementById('veMax').value);
-    const fev1 = parseFloat(document.getElementById('fev1').value);
-    const o2Pulse = parseFloat(document.getElementById('o2Pulse').value);
-    const predO2Pulse = parseFloat(document.getElementById('predO2Pulse').value);
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPET 臨床數據計算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-4">
+    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+        <header class="bg-blue-600 p-4 text-white text-center">
+            <h1 class="text-xl font-bold">CPET 數據換算工具</h1>
+            <p class="text-xs opacity-80">用於快速計算心肺運動測試指標</p>
+        </header>
 
-    // 1. % Predicted Peak HR
-    const pctPeakHR = (peakHR * 100) / (220 - age);
+        <main class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">年齡 (Age)</label>
+                    <input id="age" type="number" value="29" class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Peak HR</label>
+                    <input id="peakHR" type="number" placeholder="bpm" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+            </div>
 
-    // 2. % Predicted Peak VO2
-    const pctPeakVO2 = (peakVO2 * 100) / predVO2;
+            <div class="grid grid-cols-2 gap-3 border-t pt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">VE max</label>
+                    <input id="veMax" type="number" placeholder="L/min" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">FEV1</label>
+                    <input id="fev1" type="number" step="0.1" placeholder="L" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+            </div>
 
-    // 3. Dyspnea Index (Ventilatory Reserve)
-    const dyspneaIndex = veMax / (40 * fev1);
+            <div class="space-y-3 border-t pt-4">
+                <div class="flex gap-3">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700">Peak VO2</label>
+                        <input id="peakVO2" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700">Pred. Peak VO2</label>
+                        <input id="predVO2" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
+                    </div>
+                </div>
+            </div>
 
-    // 4. FAI (Functional Aerobic Impairment)
-    const fai = 100 - (peakVO2 / predVO2 * 100);
+            <div class="flex gap-3 border-t pt-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700">Peak O2 Pulse</label>
+                    <input id="o2Pulse" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700">Pred. O2 Pulse</label>
+                    <input id="predO2Pulse" type="number" step="0.1" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+            </div>
 
-    // 5. % O2 Pulse
-    const pctO2Pulse = (o2Pulse * 100) / predO2Pulse;
+            <button onclick="calculateCPET()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl mt-4 shadow-blue-200 shadow-lg hover:bg-blue-700 active:scale-95 transition-transform">
+                立即換算
+            </button>
 
-    // 輸出結果至畫面 (省略顯示邏輯代碼...)
-}
+            <div id="results" class="hidden mt-6 p-4 bg-slate-100 rounded-xl space-y-2 text-sm">
+                <div class="flex justify-between"><span>% Predicted Peak HR:</span><span id="res-phr" class="font-bold"></span></div>
+                <div class="flex justify-between"><span>% Predicted Peak VO2:</span><span id="res-pvo2" class="font-bold"></span></div>
+                <div class="flex justify-between"><span>Dyspnea Index:</span><span id="res-di" class="font-bold text-blue-600"></span></div>
+                <div class="flex justify-between"><span>FAI:</span><span id="res-fai" class="font-bold text-red-600"></span></div>
+                <div class="flex justify-between"><span>% O2 Pulse:</span><span id="res-o2p" class="font-bold"></span></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function calculateCPET() {
+            const age = parseFloat(document.getElementById('age').value) || 0;
+            const peakHR = parseFloat(document.getElementById('peakHR').value) || 0;
+            const veMax = parseFloat(document.getElementById('veMax').value) || 0;
+            const fev1 = parseFloat(document.getElementById('fev1').value) || 0;
+            const peakVO2 = parseFloat(document.getElementById('peakVO2').value) || 0;
+            const predVO2 = parseFloat(document.getElementById('predVO2').value) || 0;
+            const o2Pulse = parseFloat(document.getElementById('o2Pulse').value) || 0;
+            const predO2Pulse = parseFloat(document.getElementById('predO2Pulse').value) || 0;
+
+            // 計算公式
+            const pphr = (peakHR * 100) / (220 - age);
+            const ppvo2 = (peakVO2 * 100) / predVO2;
+            const di = veMax / (40 * fev1);
+            const fai = 100 - (peakVO2 / predVO2 * 100);
+            const po2p = (o2Pulse * 100) / predO2Pulse;
+
+            // 顯示結果
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('res-phr').innerText = pphr.toFixed(1) + ' %';
+            document.getElementById('res-pvo2').innerText = ppvo2.toFixed(1) + ' %';
+            document.getElementById('res-di').innerText = di.toFixed(2);
+            document.getElementById('res-fai').innerText = fai.toFixed(1) + ' %';
+            document.getElementById('res-o2p').innerText = po2p.toFixed(1) + ' %';
+        }
+    </script>
+</body>
+</html>
