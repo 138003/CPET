@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFT & CPET Report System V13</title>
+    <title>PFT & CPET Report System V14</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         input[type="checkbox"]:checked + span {
@@ -30,8 +30,8 @@
     <div class="max-w-[1400px] mx-auto mt-6 bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
         <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V13</h1>
-                <p class="text-xs text-slate-400 font-medium">Removed curly braces / Added Phase III Option</p>
+                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V14</h1>
+                <p class="text-xs text-slate-400 font-medium">Detailed BP Response Options / Free-text Termination Reason</p>
             </div>
         </div>
 
@@ -111,7 +111,13 @@
                                 <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="leg fatigue"> leg fatigue</label>
                                 <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="R reached"> R reached</label>
                                 <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="termReason" value="BP drop"> BP drop</label>
+                                <label class="flex items-center gap-1 cursor-pointer col-span-2 border-t pt-2 mt-1">
+                                    <input type="checkbox" name="termReason" value="OTHER" onchange="toggleTermOther()"> 
+                                    <span class="ml-1 text-orange-600 font-bold">Other (自定義)</span>
+                                </label>
                             </div>
+                            <input id="termOtherText" type="text" placeholder="輸入其他終止原因..." class="hidden w-full mb-3 p-1.5 border-2 border-orange-300 rounded text-[11px] bg-orange-50">
+                            
                             <select id="termResult" class="w-full p-1.5 border rounded text-[11px] bg-slate-50">
                                 <option value="maximal">maximal result</option>
                                 <option value="submaximal">submaximal result</option>
@@ -141,8 +147,22 @@
 
                     <div class="flex flex-wrap gap-4 text-xs font-bold text-slate-600">
                         <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="check12"> 12. Delayed HR recovery</label>
-                        <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="check13"> 13. Inadequate BP response</label>
                     </div>
+
+                    <div class="bg-white p-3 rounded-lg border border-indigo-200">
+                        <label class="text-xs font-bold text-indigo-800 block mb-2 uppercase">13. BP Response</label>
+                        <select id="bpResponseSelect" class="w-full p-2 border rounded text-[11px] bg-slate-50 outline-indigo-500 mb-2" onchange="toggleBPOther()">
+                            <option value="">(Normal / None)</option>
+                            <option value="Hypertensive BP response: peak SBP > 250(240) mmHg, peak DBP > 115 mmHg">Hypertensive BP response (peak SBP > 240, DBP > 115)</option>
+                            <option value="exaggerated BP response: SBP > 210 mmHg(male); 190 mmHg(Female)">exaggerated BP response (SBP > 210/190)</option>
+                            <option value="Hypotensive BP response: ↓ SBP below pretest resting value or ↓ SBP 10 mmHg after increase">Hypotensive BP response</option>
+                            <option value="Inadequate BP (blunted) response: peak SBP increase < 30 mmHg">Inadequate BP (blunted) response</option>
+                            <option value="Persistent elevated BP during recovery phase was also noted: SBP一分鐘下降不到10%, 兩分鐘下降不到20%">Persistent elevated BP during recovery phase</option>
+                            <option value="OTHER">其他 (自由填寫)</option>
+                        </select>
+                        <input id="bpOtherText" type="text" placeholder="請手寫 BP 描述..." class="hidden w-full p-2 border-2 border-orange-300 rounded text-xs bg-orange-50 animate-pulse">
+                    </div>
+
                 </section>
 
                 <section class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-4">
@@ -270,8 +290,19 @@
             otherInput.classList.toggle('hidden', status !== 'OTHER');
         }
 
+        function toggleBPOther() {
+            const status = document.getElementById('bpResponseSelect').value;
+            const otherInput = document.getElementById('bpOtherText');
+            otherInput.classList.toggle('hidden', status !== 'OTHER');
+        }
+
+        function toggleTermOther() {
+            const checkBox = document.querySelector('input[name="termReason"][value="OTHER"]');
+            const otherInput = document.getElementById('termOtherText');
+            otherInput.classList.toggle('hidden', !checkBox.checked);
+        }
+
         function getFAISeverity(faiValue) {
-            // FAI severity: 0-28% no significant, 28-40% mild , 40-54% moderate , 54-68% marked, >68% extremely
             if (faiValue < 28) return "no significant";
             if (faiValue < 40) return "mild";
             if (faiValue < 54) return "moderate";
@@ -321,7 +352,13 @@
             const ekgSel = document.getElementById('ekgStatus').value;
             const ekgFinal = ekgSel === 'OTHER' ? document.getElementById('ekgOtherText').value : ekgSel;
 
-            const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value);
+            // Termination Reason Logic (Updated V14)
+            const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => {
+                if (el.value === 'OTHER') {
+                    return document.getElementById('termOtherText').value;
+                }
+                return el.value;
+            }).filter(val => val !== ""); // filter out empty strings
             const termReasonText = reasons.length > 0 ? reasons.join(", ") : "____";
 
             // Point 6 Logic
@@ -347,7 +384,16 @@
             }
 
             const line12 = document.getElementById('check12').checked ? `- Delayed heart rate recovery was observed\n` : "";
-            const line13 = document.getElementById('check13').checked ? `- Inadequate BP response was noted\n` : "";
+            
+            // BP Response Logic (Updated V14)
+            const bpSel = document.getElementById('bpResponseSelect').value;
+            let line13 = "";
+            if (bpSel === 'OTHER') {
+                const bpOther = document.getElementById('bpOtherText').value;
+                line13 = bpOther ? `- ${bpOther}\n` : "";
+            } else if (bpSel !== "") {
+                line13 = `- ${bpSel}\n`;
+            }
 
             // 4. Conclusion 區塊生成
             let conclusionText = "";
@@ -374,7 +420,6 @@
             if (document.getElementById('sugg1Check').checked) {
                 const cptTypes = Array.from(document.querySelectorAll('input[name="cptType"]:checked')).map(el => el.value);
                 const cptString = cptTypes.length > 0 ? cptTypes.join(", ") : "____";
-                // 修正：移除了 { }
                 suggestionLines.push(`- continue phase II CPT with ${cptString}`);
             }
 
