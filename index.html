@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFT & CPET 報告生成器 V11.5</title>
+    <title>PFT & CPET Report System V12</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 自定義 checkbox 樣式優化 */
         input[type="checkbox"]:checked + span {
             color: #4f46e5;
             font-weight: 700;
+        }
+        /* 隱藏滾動條但保持功能 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
         }
     </style>
 </head>
@@ -17,8 +30,8 @@
     <div class="max-w-[1400px] mx-auto mt-6 bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
         <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V11.5</h1>
-                <p class="text-xs text-slate-400 font-medium">支援 FAI 自動判定、多層次建議生成</p>
+                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V12</h1>
+                <p class="text-xs text-slate-400 font-medium">No numbering / Updated Point 6 / Clean Suggestions</p>
             </div>
         </div>
 
@@ -79,6 +92,15 @@
                             <option value="OTHER">其他 (自由填寫)</option>
                         </select>
                         <input id="ekgOtherText" type="text" placeholder="請手寫 EKG 描述..." class="hidden w-full p-2 border-2 border-orange-300 rounded text-xs bg-orange-50 animate-pulse">
+                    </div>
+
+                    <div class="bg-white p-3 rounded-lg border border-indigo-200">
+                        <label class="text-xs font-bold text-indigo-800 block mb-2 uppercase">6. HR Response / CI</label>
+                        <select id="hrResponseSelect" class="w-full p-2 border rounded text-xs bg-slate-50 outline-indigo-500">
+                            <option value="chronotropic incompetence was noted">chronotropic incompetence was noted</option>
+                            <option value="Steep HR vs VO2 response was noted">Steep HR vs VO2 response was noted</option>
+                            <option value="">(None / Empty)</option>
+                        </select>
                     </div>
 
                     <div class="grid grid-cols-1 gap-4">
@@ -190,7 +212,12 @@
                         <div>
                             <label class="flex items-start gap-2 cursor-pointer">
                                 <input type="checkbox" id="sugg2Check">
-                                <span class="text-xs text-slate-700 font-bold leading-tight">2. Drug modification <br><span class="text-[10px] font-normal text-slate-400">(VE/CO2 slope<34, inadequate BP/HR response)</span></span>
+                                <div class="flex flex-col">
+                                    <span class="text-xs text-slate-700 font-bold">2. Drug modification</span>
+                                    <span class="text-[10px] font-normal text-slate-400 leading-tight bg-slate-50 p-1 rounded mt-1 border border-slate-100">
+                                        (Hints: VE/CO2 slope<34 不像是 heart failure, 但是血壓被抑制 (inadequate BP response) 或心跳被抑制 (chronotropic incompetence))
+                                    </span>
+                                </div>
                             </label>
                         </div>
                     </div>
@@ -255,7 +282,7 @@
             const peakHR = parseFloat(document.getElementById('peakHR').value) || 0;
             const peakVO2_ml = parseFloat(document.getElementById('peakVO2_ml').value) || 0;
             const peakVO2_L = parseFloat(document.getElementById('peakVO2_L').value) || 0;
-            const predVO2_L = parseFloat(document.getElementById('predVO2_L').value) || 1; // 避免除以0
+            const predVO2_L = parseFloat(document.getElementById('predVO2_L').value) || 1; 
             const veMax = parseFloat(document.getElementById('veMax').value) || 0;
             const fev1 = parseFloat(document.getElementById('fev1').value) || 1;
             const oues = document.getElementById('oues').value || "__";
@@ -289,6 +316,14 @@
             const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value);
             const termReasonText = reasons.length > 0 ? reasons.join(", ") : "____";
 
+            // Point 6 Logic (Updated V12)
+            const hrResponseSel = document.getElementById('hrResponseSelect').value;
+            let line6 = "";
+            if (hrResponseSel !== "") {
+                // 如果有選項目，則顯示項目名稱加上 CI 數值
+                line6 = `- ${hrResponseSel}; CI=${ciDisplay} (nl<0.8, if on BB<0.6)\n`;
+            }
+
             // AT Logic
             const isAtObserved = document.querySelector('input[name="atObserved"]:checked').value === 'yes';
             let atLine = "";
@@ -297,15 +332,15 @@
                 const rcpV = parseFloat(document.getElementById('rcp_ml').value) || 0;
                 const atPct = peakVO2_ml > 0 ? (atV * 100 / peakVO2_ml).toFixed(1) : "0.0";
                 const rcpPct = peakVO2_ml > 0 ? (rcpV * 100 / peakVO2_ml).toFixed(1) : "0.0";
-                atLine = `11. AT was about ${atV} ml/kg/min (${atPct}% of peak VO2); RCP was about ${rcpV} ml/kg/min (${rcpPct}% of peak VO2)`;
+                atLine = `- AT was about ${atV} ml/kg/min (${atPct}% of peak VO2); RCP was about ${rcpV} ml/kg/min (${rcpPct}% of peak VO2)`;
             } else {
                 const atNoSel = document.getElementById('atNoReason').value;
                 const atNoFinal = atNoSel === 'OTHER' ? document.getElementById('atNoOtherText').value : atNoSel;
-                atLine = `11. ${atNoFinal || "____"}`;
+                atLine = `- ${atNoFinal || "____"}`;
             }
 
-            const line12 = document.getElementById('check12').checked ? `12. Delayed heart rate recovery was observed\n` : "";
-            const line13 = document.getElementById('check13').checked ? `13. Inadequate BP response was noted\n` : "";
+            const line12 = document.getElementById('check12').checked ? `- Delayed heart rate recovery was observed\n` : "";
+            const line13 = document.getElementById('check13').checked ? `- Inadequate BP response was noted\n` : "";
 
             // 4. Conclusion 區塊生成
             let conclusionText = "";
@@ -332,36 +367,34 @@
             if (document.getElementById('sugg1Check').checked) {
                 const cptTypes = Array.from(document.querySelectorAll('input[name="cptType"]:checked')).map(el => el.value);
                 const cptString = cptTypes.length > 0 ? cptTypes.join(", ") : "____";
-                suggestionLines.push(`1. continue phase II CPT with {${cptString}}`);
+                suggestionLines.push(`- continue phase II CPT with {${cptString}}`);
             }
 
-            // Suggestion 2
+            // Suggestion 2 (Clean text only)
             if (document.getElementById('sugg2Check').checked) {
-                let index = suggestionLines.length + 1;
-                suggestionLines.push(`${index}. Drug modification (VE/CO2 slope<34 不像是heart failure, 但是血壓被抑制 (inadequate BP response) 或心跳被抑制 (chronotropic incompetence))`);
+                suggestionLines.push(`- Drug modification`);
             }
             
             const suggestionText = suggestionLines.length > 0 ? `\n\nSuggestion:\n${suggestionLines.join('\n')}` : "";
 
-            // 6. 最終報告組合
+            // 6. 最終報告組合 (全部改為 - 開頭，無數字)
             const report = 
 `A: pulmonary function test: ${pftStatus}
-1. FEV1/FVC=${fevfvc}%
-2. FVC:${fvc_pred}% predicted value
+- FEV1/FVC=${fevfvc}%
+- FVC:${fvc_pred}% predicted value
 
 B: CPTX result
-1. max HR:${peakHR};% predicted peak HR=${pPeakHR}%
-2. peak VO2:${peakVO2_ml}ml/kg/min; peak MET:${peakMETs}METs;% predicted peak VO2:${pPeakVO2}%
-3. % FAI=${faiDisplay}%
-4. Dyspnea index=${di};Breathing reserve=${br}
-5. EKG: ${ekgFinal || "____"}
-6. ${document.getElementById('option6')?.value || 'chronotropic incompetence was noted'}; CI=${ciDisplay} (nl<0.8, if on BB<0.6)
-7. OUES: ${oues} ml/min
-8. VE/VCO2 slope: ${vevco2}
-9. O2 pulse: ${o2p} ; ${pO2p}% of predicted
-10. Exercise was terminated due to ${termReasonText}, ${document.getElementById('termResult').value}
+- max HR:${peakHR};% predicted peak HR=${pPeakHR}%
+- peak VO2:${peakVO2_ml}ml/kg/min; peak MET:${peakMETs}METs;% predicted peak VO2:${pPeakVO2}%
+- % FAI=${faiDisplay}%
+- Dyspnea index=${di};Breathing reserve=${br}
+- EKG: ${ekgFinal || "____"}
+${line6}- OUES: ${oues} ml/min
+- VE/VCO2 slope: ${vevco2}
+- O2 pulse: ${o2p} ; ${pO2p}% of predicted
+- Exercise was terminated due to ${termReasonText}, ${document.getElementById('termResult').value}
 ${atLine}
-${line12}${line13}14. normal SpO2 response during exam
+${line12}${line13}- normal SpO2 response during exam
 
 Conclusion:
 ${conclusionText}${suggestionText}`;
