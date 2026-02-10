@@ -1,0 +1,28 @@
+function calculateCPET() {
+    // 取得輸入值
+    const age = parseFloat(document.getElementById('age').value);
+    const peakHR = parseFloat(document.getElementById('peakHR').value);
+    const peakVO2 = parseFloat(document.getElementById('peakVO2').value);
+    const predVO2 = parseFloat(document.getElementById('predVO2').value);
+    const veMax = parseFloat(document.getElementById('veMax').value);
+    const fev1 = parseFloat(document.getElementById('fev1').value);
+    const o2Pulse = parseFloat(document.getElementById('o2Pulse').value);
+    const predO2Pulse = parseFloat(document.getElementById('predO2Pulse').value);
+
+    // 1. % Predicted Peak HR
+    const pctPeakHR = (peakHR * 100) / (220 - age);
+
+    // 2. % Predicted Peak VO2
+    const pctPeakVO2 = (peakVO2 * 100) / predVO2;
+
+    // 3. Dyspnea Index (Ventilatory Reserve)
+    const dyspneaIndex = veMax / (40 * fev1);
+
+    // 4. FAI (Functional Aerobic Impairment)
+    const fai = 100 - (peakVO2 / predVO2 * 100);
+
+    // 5. % O2 Pulse
+    const pctO2Pulse = (o2Pulse * 100) / predO2Pulse;
+
+    // 輸出結果至畫面 (省略顯示邏輯代碼...)
+}
