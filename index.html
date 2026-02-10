@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFT & CPET Report System V12</title>
+    <title>PFT & CPET Report System V13</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         input[type="checkbox"]:checked + span {
@@ -30,8 +30,8 @@
     <div class="max-w-[1400px] mx-auto mt-6 bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
         <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V12</h1>
-                <p class="text-xs text-slate-400 font-medium">No numbering / Updated Point 6 / Clean Suggestions</p>
+                <h1 class="text-xl font-bold tracking-tight text-indigo-400">PFT & CPET Report System V13</h1>
+                <p class="text-xs text-slate-400 font-medium">Removed curly braces / Added Phase III Option</p>
             </div>
         </div>
 
@@ -209,7 +209,7 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div class="mb-3">
                             <label class="flex items-start gap-2 cursor-pointer">
                                 <input type="checkbox" id="sugg2Check">
                                 <div class="flex flex-col">
@@ -220,6 +220,14 @@
                                 </div>
                             </label>
                         </div>
+
+                        <div>
+                            <label class="flex items-start gap-2 cursor-pointer">
+                                <input type="checkbox" id="sugg3Check">
+                                <span class="text-xs text-slate-700 font-bold">3. Try phase III CPT and follow-up 3 months later</span>
+                            </label>
+                        </div>
+
                     </div>
                 </section>
 
@@ -316,11 +324,10 @@
             const reasons = Array.from(document.querySelectorAll('input[name="termReason"]:checked')).map(el => el.value);
             const termReasonText = reasons.length > 0 ? reasons.join(", ") : "____";
 
-            // Point 6 Logic (Updated V12)
+            // Point 6 Logic
             const hrResponseSel = document.getElementById('hrResponseSelect').value;
             let line6 = "";
             if (hrResponseSel !== "") {
-                // 如果有選項目，則顯示項目名稱加上 CI 數值
                 line6 = `- ${hrResponseSel}; CI=${ciDisplay} (nl<0.8, if on BB<0.6)\n`;
             }
 
@@ -363,21 +370,27 @@
             // 5. Suggestion 區塊生成
             let suggestionLines = [];
             
-            // Suggestion 1
+            // Suggestion 1 (Phase II)
             if (document.getElementById('sugg1Check').checked) {
                 const cptTypes = Array.from(document.querySelectorAll('input[name="cptType"]:checked')).map(el => el.value);
                 const cptString = cptTypes.length > 0 ? cptTypes.join(", ") : "____";
-                suggestionLines.push(`- continue phase II CPT with {${cptString}}`);
+                // 修正：移除了 { }
+                suggestionLines.push(`- continue phase II CPT with ${cptString}`);
             }
 
-            // Suggestion 2 (Clean text only)
+            // Suggestion 2 (Drug mod)
             if (document.getElementById('sugg2Check').checked) {
                 suggestionLines.push(`- Drug modification`);
+            }
+
+            // Suggestion 3 (Phase III)
+            if (document.getElementById('sugg3Check').checked) {
+                suggestionLines.push(`- Try phase III CPT and follow-up 3 months later`);
             }
             
             const suggestionText = suggestionLines.length > 0 ? `\n\nSuggestion:\n${suggestionLines.join('\n')}` : "";
 
-            // 6. 最終報告組合 (全部改為 - 開頭，無數字)
+            // 6. 最終報告組合
             const report = 
 `A: pulmonary function test: ${pftStatus}
 - FEV1/FVC=${fevfvc}%
